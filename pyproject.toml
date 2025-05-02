@@ -1,7 +1,7 @@
 [project]
 name = "unoff-qweather-mcp"
 version = "0.1.0"
-description = "Add your description here"
+description = "An unofficial MCP (Multiagent Conversation Protocol) wrapper for the QWeather API"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

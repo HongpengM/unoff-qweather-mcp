@@ -58,14 +58,18 @@ uv --directory /path/to/your_dir run src/unoff_qweather/qweather.py
 ```json
 {
   "mcpServers": {
-    "filesystem": {
+    "qweather": {
       "command": "uv",
       "args": [
         "--directory",
         "/path/to/your_dir",
         "run",
         "src/unoff_qweather/qweather.py"
-      ]
+      ],
+      "env": {
+        "QWEATHER_API_KEY": "your_api_key_here",
+        "QWEATHER_API_HOST": "api.qweather.com" 
+      }
     }
   }
 }

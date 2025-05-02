@@ -35,23 +35,43 @@ The API host depends on your subscription tier. See [QWeather API Configuration]
 
 ## Usage
 
-### Running as an MCP Server
 
-Run the MCP server to expose the QWeather API tools:
+### Running as an Claude MCP
+
+
+macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+
 
 ```bash
-python -m unoff_qweather.qweather
+# Clone and config the env
+git clone https://github.com/HongpengM/unoff-qweather-mcp.git
+
+# Set up your environment variables by copying the example file
+copy env.example .env
+
+# Run the MCP server
+uv --directory /path/to/your_dir run src/unoff_qweather/qweather.py
 ```
 
-### Using with MCP Client
-
-Connect to the QWeather MCP service:
-
-```python
-from mcp.client import Client
-
-client = Client("unoff-qweather-mcp")
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/path/to/your_dir",
+        "run",
+        "src/unoff_qweather/qweather.py"
+      ]
+    }
+  }
+}
 ```
+
+
 
 ### Example: Get current weather for a location
 

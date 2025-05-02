@@ -2,6 +2,7 @@ import os
 import copy
 import httpx
 from asyncio import sleep
+from dotenv import load_dotenv
  
 from mcp.server.fastmcp import FastMCP, Context
 
@@ -12,6 +13,9 @@ Get API Key from local environment variable "QWEATHER_API_KEY", for getting an a
 
 Get API Host from local environment variable "QWEATHER_API_HOST", for getting an api host, please visit https://dev.qweather.com/docs/configuration/api-config/#api-host for more information.
 '''
+# Load environment variables from .env file if present
+load_dotenv()
+
 api_key = os.getenv("QWEATHER_API_KEY")
 api_host = os.getenv("QWEATHER_API_HOST")
 if api_host == None or api_key == None:

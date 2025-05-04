@@ -1,9 +1,19 @@
 import os
+import sys
 import copy
 import httpx
 from asyncio import sleep
 from dotenv import load_dotenv
- 
+from pydantic import BaseModel, ValidationError
+from typing import Optional, Dict, Any, Union
+
+# Handle imports for both package usage and direct script execution
+try:
+    from unoff_qweather_mcp.params import NumberParam, CoordinatesParams, DaysParam, HoursParam
+except ModuleNotFoundError:
+    # When running directly, import from the same directory
+    from params import NumberParam, CoordinatesParams, DaysParam, HoursParam
+
 from mcp.server.fastmcp import FastMCP, Context
 
 mcp = FastMCP("unoff-qweather-mcp")
@@ -36,6 +46,15 @@ async def lookup_city(location, adm=None, range=None, number=None, lang=None):
     - number (optional): Number of results to return (1-20, default is 10).
     - lang (optional): Language setting for the response.
     '''
+    # Validate number parameter using the NumberParam model
+    if number is not None:
+        try:
+            number_param = NumberParam(number=number)
+            number = number_param.number
+        except ValidationError as e:
+            error_message = f"Parameter validation error: {str(e)}"
+            return {"status": "error", "code": 400, "message": error_message}
+    
     params = {
         "location": location
     }
@@ -79,6 +98,15 @@ async def lookup_poi(location, type, city=None, number=None, lang=None):
     - number (optional): Number of results to return (1-20, default is 10).
     - lang (optional): Language setting for the response.
     '''
+    # Validate number parameter using the NumberParam model
+    if number is not None:
+        try:
+            number_param = NumberParam(number=number)
+            number = number_param.number
+        except ValidationError as e:
+            error_message = f"Parameter validation error: {str(e)}"
+            return {"status": "error", "code": 400, "message": error_message}
+    
     params = {
         "location": location,
         "type": type
@@ -177,6 +205,14 @@ async def weather_forecast_days(location, days=3, lang=None, unit=None):
     - And more
     '''
     # Validate days parameter
+    try:
+        days_param = DaysParam(days=days)
+        days = days_param.days
+    except ValidationError as e:
+        error_message = f"Parameter validation error: {str(e)}"
+        return {"status": "error", "code": 400, "message": error_message}
+    
+    # Validate days parameter against API valid values
     valid_days = [3, 7, 10, 15, 30]
     
     # Cap at 30 days
@@ -239,6 +275,14 @@ async def weather_forecast_hours(location, hours=24, lang=None, unit=None):
     - And more
     '''
     # Validate hours parameter
+    try:
+        hours_param = HoursParam(hours=hours)
+        hours = hours_param.hours
+    except ValidationError as e:
+        error_message = f"Parameter validation error: {str(e)}"
+        return {"status": "error", "code": 400, "message": error_message}
+    
+    # Validate hours parameter against API valid values
     valid_hours = [24, 72, 168]
     
     # Cap at 168 hours (7 days)
@@ -378,6 +422,14 @@ async def weather_indices(location, type, days=1, lang=None):
     - Detailed description text
     '''
     # Validate days parameter
+    try:
+        days_param = DaysParam(days=days)
+        days = days_param.days
+    except ValidationError as e:
+        error_message = f"Parameter validation error: {str(e)}"
+        return {"status": "error", "code": 400, "message": error_message}
+    
+    # Validate days parameter against API valid values
     if days != 1 and days != 3:
         days = 1  # Default to 1 day if invalid value provided
         
@@ -422,6 +474,13 @@ async def air_quality_now(latitude, longitude, lang=None):
     - Health recommendations for general and sensitive populations
     - Related monitoring station information
     '''
+    # Validate coordinates using the CoordinatesParams model
+    try:
+        coords = CoordinatesParams(latitude=latitude, longitude=longitude)
+    except ValidationError as e:
+        error_message = f"Parameter validation error: {str(e)}"
+        return {"status": "error", "code": 400, "message": error_message}
+    
     params = {}
     
     # Add optional parameters if provided
@@ -436,7 +495,7 @@ async def air_quality_now(latitude, longitude, lang=None):
         
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            f"https://{api_host}/airquality/v1/current/{latitude}/{longitude}", 
+            f"https://{api_host}/airquality/v1/current/{coords.latitude}/{coords.longitude}", 
             params=params,
             headers=headers
         )
@@ -461,6 +520,13 @@ async def air_quality_forecast(latitude, longitude, lang=None):
     - Pollutant concentrations and sub-indices
     - Health recommendations for general and sensitive populations
     '''
+    # Validate coordinates using the CoordinatesParams model
+    try:
+        coords = CoordinatesParams(latitude=latitude, longitude=longitude)
+    except ValidationError as e:
+        error_message = f"Parameter validation error: {str(e)}"
+        return {"status": "error", "code": 400, "message": error_message}
+    
     params = {}
     
     # Add optional parameters if provided
@@ -475,7 +541,7 @@ async def air_quality_forecast(latitude, longitude, lang=None):
         
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            f"https://{api_host}/airquality/v1/daily/{latitude}/{longitude}", 
+            f"https://{api_host}/airquality/v1/daily/{coords.latitude}/{coords.longitude}", 
             params=params,
             headers=headers
         )

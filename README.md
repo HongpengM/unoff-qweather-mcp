@@ -75,29 +75,6 @@ uv --directory /path/to/your_dir run src/unoff_qweather/qweather.py
 }
 ```
 
-
-
-### Example: Get current weather for a location
-
-```python
-# First lookup a city to get its LocationID
-cities = await client.lookup_city(location="London")
-location_id = cities["location"][0]["id"]
-
-# Get current weather conditions
-weather = await client.weather_now(location=location_id)
-print(f"Temperature: {weather['now']['temp']}°C")
-print(f"Weather: {weather['now']['text']}")
-```
-
-### Example: Get a 7-day forecast
-
-```python
-forecast = await client.weather_forecast_days(location=location_id, days=7)
-for day in forecast["daily"]:
-    print(f"Date: {day['fxDate']}, Max: {day['tempMax']}°C, Min: {day['tempMin']}°C, Weather: {day['textDay']}")
-```
-
 ## Available Tools
 
 This package provides the following MCP tools:
@@ -115,14 +92,6 @@ This package provides the following MCP tools:
 
 For detailed parameter information, see each function's docstring in the code.
 
-## Running with MCP.so
-
-This package can be deployed on [MCP.so](https://mcp.so) to create a publicly accessible API. To deploy:
-
-1. Make sure you have an MCP.so account
-2. Install the MCP CLI: `pip install mcp[cli]`
-3. Log in to MCP.so: `mcp login`
-4. Deploy your MCP: `mcp deploy`
 
 ## License
 

@@ -40,6 +40,7 @@ The API host depends on your subscription tier. See [QWeather API Configuration]
 
 
 macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
 Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
 
@@ -55,6 +56,27 @@ copy env.example .env
 uv --directory /path/to/your_dir run src/unoff_qweather/qweather.py
 ```
 
+Using the published version:
+
+```json
+{
+  "mcpServers": {
+    "qweather": {
+      "command": "uvx",
+      "args": [
+        "unoff-qweather-mcp"
+      ],
+      "env": {
+        "QWEATHER_API_KEY": "your_api_key_here",
+        "QWEATHER_API_HOST": "api.qweather.com" 
+      }
+    }
+  }
+}
+```
+
+
+For local pulled repository: 
 ```json
 {
   "mcpServers": {
